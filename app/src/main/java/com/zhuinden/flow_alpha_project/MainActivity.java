@@ -155,11 +155,14 @@ public class MainActivity
 
     @Override
     public void onBackPressed() {
-        Object key = Flow.getKey(root.getChildAt(0).getContext());
-        Log.i(TAG, "Key is " + key);
-        if(key instanceof OtherKey) {
-            Flow.get(this).goBack();
-        } else {
+        //Object key = Flow.getKey(root.getChildAt(0).getContext());
+        //Log.i(TAG, "Key is " + key);
+        //if(key instanceof OtherKey) {
+        //    Flow.get(this).goBack();
+        //} else {
+        //    super.onBackPressed();
+        //}
+        if(!Flow.get(this).goBack()) {
             super.onBackPressed();
         }
     }
