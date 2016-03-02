@@ -36,7 +36,7 @@ public class OtherView extends LinearLayout {
     protected void onFinishInflate() {
         super.onFinishInflate();
         if(!isInEditMode()) {
-            MainActivity.OtherKey otherKey = Flow.getKey(this);
+            OtherKey otherKey = Flow.getKey(this);
             Log.i(TAG, "Obtained key: " + otherKey);
         }
     }

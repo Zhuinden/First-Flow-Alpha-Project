@@ -44,13 +44,13 @@ public class WelcomeView extends LinearLayout {
     protected void onFinishInflate() {
         super.onFinishInflate();
         if(!isInEditMode()) {
-            MainActivity.WelcomeKey welcomeKey = Flow.getKey(this);
+            WelcomeKey welcomeKey = Flow.getKey(this);
             Log.i(TAG, "Obtained key: " + welcomeKey);
         }
         findViewById(R.id.welcome_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Flow.get(v).set(new MainActivity.OtherKey());
+                Flow.get(v).set(new OtherKey());
             }
         });
     }

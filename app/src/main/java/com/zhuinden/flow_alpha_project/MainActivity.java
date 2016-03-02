@@ -1,29 +1,22 @@
 package com.zhuinden.flow_alpha_project;
 
 import android.content.Context;
-import android.os.Parcel;
+import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
 import java.util.Map;
 
-import flow.ClassKey;
 import flow.Direction;
-import flow.Dispatcher;
 import flow.Flow;
 import flow.KeyChanger;
 import flow.KeyDispatcher;
 import flow.KeyParceler;
 import flow.State;
-import flow.Traversal;
 import flow.TraversalCallback;
 
 public class MainActivity
@@ -92,72 +85,6 @@ public class MainActivity
     private static final String TAG = "MainActivity";
 
     RelativeLayout root;
-
-    public static class WelcomeKey
-            extends ClassKey //equals, hashcode based on class of key
-            implements Parcelable {
-        public WelcomeKey() {
-        }
-
-        protected WelcomeKey(Parcel in) {
-        }
-
-        @Override
-        public int describeContents() {
-            return 0;
-        }
-
-        @Override
-        public void writeToParcel(Parcel dest, int flags) {
-
-        }
-
-        public static final Creator<WelcomeKey> CREATOR = new Creator<WelcomeKey>() {
-            @Override
-            public WelcomeKey createFromParcel(Parcel in) {
-                return new WelcomeKey(in);
-            }
-
-            @Override
-            public WelcomeKey[] newArray(int size) {
-                return new WelcomeKey[size];
-            }
-        };
-
-    }
-
-    public static class OtherKey
-            extends ClassKey //equals, hashcode based on class of key
-            implements Parcelable {
-        public OtherKey() {
-        }
-
-        protected OtherKey(Parcel in) {
-        }
-
-        @Override
-        public int describeContents() {
-            return 0;
-        }
-
-        @Override
-        public void writeToParcel(Parcel dest, int flags) {
-
-        }
-
-        public static final Creator<OtherKey> CREATOR = new Creator<OtherKey>() {
-            @Override
-            public OtherKey createFromParcel(Parcel in) {
-                return new OtherKey(in);
-            }
-
-            @Override
-            public OtherKey[] newArray(int size) {
-                return new OtherKey[size];
-            }
-        };
-
-    }
 
     @Override
     protected void attachBaseContext(Context baseContext) {
