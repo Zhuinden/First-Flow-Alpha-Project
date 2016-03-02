@@ -78,7 +78,8 @@ public class MainActivity
                     public Object toKey(Parcelable parcelable) {
                         return parcelable;
                     }
-                }).defaultKey(new WelcomeKey()) //
+                }) //
+                .defaultKey(new WelcomeKey()) //
                 .dispatcher(KeyDispatcher.configure(this, new MainKeyChanger(this)).build()) //
                 .install(); //
         super.attachBaseContext(baseContext);
