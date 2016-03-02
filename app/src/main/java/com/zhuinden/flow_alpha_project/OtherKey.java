@@ -3,13 +3,11 @@ package com.zhuinden.flow_alpha_project;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import flow.ClassKey;
-
 /**
  * Created by Zhuinden on 2016.03.02..
  */
 public class OtherKey
-        extends ClassKey //equals, hashcode based on class of key
+        extends LayoutClassKey //equals, hashcode based on class of key
         implements Parcelable {
     public OtherKey() {
     }
@@ -39,4 +37,8 @@ public class OtherKey
         }
     };
 
+    @Override
+    public int getLayout() {
+        return R.layout.path_other;
+    }
 }

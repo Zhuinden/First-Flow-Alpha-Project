@@ -34,48 +34,25 @@ public class MainActivity
         @Override
         public void changeKey(State outgoingState, State incomingState, Direction direction, Map<Object, Context> incomingContexts, TraversalCallback callback) {
             Log.i(TAG, "Change Key: [" + outgoingState + "] - [" + incomingState + "]");
-            if(incomingState.getKey() instanceof WelcomeKey) {
-                WelcomeKey welcomeKey = incomingState.getKey(); //new key
-                if(outgoingState != null && mainActivity.root.getChildAt(0) != null) {
-                    Log.i(TAG, "Persisting outgoing state for " + mainActivity.root.getChildAt(0));
-                    View previousView = mainActivity.root.getChildAt(0);
-                    outgoingState.save(previousView);
-                    if(previousView instanceof Bundleable) {
-                        Log.i(TAG, "Persisting state to bundle for " + mainActivity.root.getChildAt(0));
-                        outgoingState.setBundle(((Bundleable)previousView).toBundle());
-                    }
+            LayoutClassKey layoutClassKey = incomingState.getKey();
+            if(outgoingState != null && mainActivity.root.getChildAt(0) != null) {
+                Log.i(TAG, "Persisting outgoing state for " + mainActivity.root.getChildAt(0));
+                View previousView = mainActivity.root.getChildAt(0);
+                outgoingState.save(previousView);
+                if(previousView instanceof Bundleable) {
+                    Log.i(TAG, "Persisting state to bundle for " + mainActivity.root.getChildAt(0));
+                    outgoingState.setBundle(((Bundleable) previousView).toBundle());
                 }
-                mainActivity.root.removeAllViews();
-                Context internalContext = incomingContexts.get(welcomeKey);
-                LayoutInflater layoutInflater = (LayoutInflater) internalContext.getSystemService(LAYOUT_INFLATER_SERVICE);
-                layoutInflater.inflate(R.layout.path_welcome, mainActivity.root, true);
-                Log.i(TAG, "Restoring view state for " + mainActivity.root.getChildAt(0));
-                incomingState.restore(mainActivity.root.getChildAt(0));
-                if(mainActivity.root.getChildAt(0) instanceof Bundleable) {
-                    Log.i(TAG, "Restoring state from bundle for " + mainActivity.root.getChildAt(0));
-                    ((Bundleable)mainActivity.root.getChildAt(0)).fromBundle(incomingState.getBundle());
-                }
-            } else if(incomingState.getKey() instanceof OtherKey) {
-                OtherKey otherKey = incomingState.getKey(); //new key
-                if(outgoingState != null && mainActivity.root.getChildAt(0) != null) {
-                    Log.i(TAG, "Persisting outgoing state for " + mainActivity.root.getChildAt(0));
-                    View previousView = mainActivity.root.getChildAt(0);
-                    outgoingState.save(previousView);
-                    if(previousView instanceof Bundleable) {
-                        Log.i(TAG, "Persisting state to bundle for " + mainActivity.root.getChildAt(0));
-                        outgoingState.setBundle(((Bundleable)previousView).toBundle());
-                    }
-                }
-                mainActivity.root.removeAllViews();
-                Context internalContext = incomingContexts.get(otherKey);
-                LayoutInflater layoutInflater = (LayoutInflater) internalContext.getSystemService(LAYOUT_INFLATER_SERVICE);
-                layoutInflater.inflate(R.layout.path_other, mainActivity.root, true);
-                Log.i(TAG, "Restoring view state for " + mainActivity.root.getChildAt(0));
-                incomingState.restore(mainActivity.root.getChildAt(0));
-                if(mainActivity.root.getChildAt(0) instanceof Bundleable) {
-                    Log.i(TAG, "Restoring state from bundle for " + mainActivity.root.getChildAt(0));
-                    ((Bundleable)mainActivity.root.getChildAt(0)).fromBundle(incomingState.getBundle());
-                }
+            }
+            mainActivity.root.removeAllViews();
+            Context internalContext = incomingContexts.get(layoutClassKey);
+            LayoutInflater layoutInflater = (LayoutInflater) internalContext.getSystemService(LAYOUT_INFLATER_SERVICE);
+            layoutInflater.inflate(layoutClassKey.getLayout(), mainActivity.root, true);
+            Log.i(TAG, "Restoring view state for " + mainActivity.root.getChildAt(0));
+            incomingState.restore(mainActivity.root.getChildAt(0));
+            if(mainActivity.root.getChildAt(0) instanceof Bundleable) {
+                Log.i(TAG, "Restoring state from bundle for " + mainActivity.root.getChildAt(0));
+                ((Bundleable) mainActivity.root.getChildAt(0)).fromBundle(incomingState.getBundle());
             }
             callback.onTraversalCompleted();
         }
