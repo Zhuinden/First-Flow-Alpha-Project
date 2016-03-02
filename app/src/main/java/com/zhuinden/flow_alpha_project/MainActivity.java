@@ -22,7 +22,6 @@ import flow.TraversalCallback;
 
 public class MainActivity
         extends AppCompatActivity {
-
     static class MainKeyChanger extends KeyChanger {
         private static final String TAG = "MainKeyChanger";
 
@@ -83,13 +82,6 @@ public class MainActivity
 
     @Override
     public void onBackPressed() {
-        //Object key = Flow.getKey(root.getChildAt(0).getContext());
-        //Log.i(TAG, "Key is " + key);
-        //if(key instanceof OtherKey) {
-        //    Flow.get(this).goBack();
-        //} else {
-        //    super.onBackPressed();
-        //}
         if(!Flow.get(this).goBack()) {
             super.onBackPressed();
         }
@@ -101,6 +93,21 @@ public class MainActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         root = (RelativeLayout) findViewById(R.id.main_root);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        Log.i(TAG, "Calling onSaveInstanceState()");
+        super.onSaveInstanceState(outState);
+        ForceBundler.saveToBundle(this, root.getChildAt(0));
+    }
+
+    //
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        Log.i(TAG, "Calling onRestoreInstanceState()");
+        super.onRestoreInstanceState(savedInstanceState);
     }
 
     @Override
@@ -131,18 +138,5 @@ public class MainActivity
     protected void onDestroy() {
         Log.i(TAG, "Calling onDestroy()");
         super.onDestroy();
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        Log.i(TAG, "Calling onSaveInstanceState()");
-        super.onSaveInstanceState(outState);
-        ForceBundler.saveToBundle(this, root.getChildAt(0));
-    }
-
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        Log.i(TAG, "Calling onRestoreInstanceState()");
-        super.onRestoreInstanceState(savedInstanceState);
     }
 }
