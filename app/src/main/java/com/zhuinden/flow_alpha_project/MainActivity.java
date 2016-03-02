@@ -22,7 +22,8 @@ import flow.TraversalCallback;
 
 public class MainActivity
         extends AppCompatActivity {
-    static class MainKeyChanger extends KeyChanger {
+    static class MainKeyChanger
+            extends KeyChanger {
         private static final String TAG = "MainKeyChanger";
 
         private MainActivity mainActivity;
@@ -66,17 +67,20 @@ public class MainActivity
     @Override
     protected void attachBaseContext(Context baseContext) {
         Log.i(TAG, "Attaching base context");
-        baseContext = Flow.configure(baseContext, this).keyParceler(new KeyParceler() {
-            @Override
-            public Parcelable toParcelable(Object key) {
-                return (Parcelable) key;
-            }
+        baseContext = Flow.configure(baseContext, this) //
+                .keyParceler(new KeyParceler() { //
+                    @Override
+                    public Parcelable toParcelable(Object key) {
+                        return (Parcelable) key;
+                    }
 
-            @Override
-            public Object toKey(Parcelable parcelable) {
-                return parcelable;
-            }
-        }).defaultKey(new WelcomeKey()).dispatcher(KeyDispatcher.configure(this, new MainKeyChanger(this)).build()).install();
+                    @Override
+                    public Object toKey(Parcelable parcelable) {
+                        return parcelable;
+                    }
+                }).defaultKey(new WelcomeKey()) //
+                .dispatcher(KeyDispatcher.configure(this, new MainKeyChanger(this)).build()) //
+                .install(); //
         super.attachBaseContext(baseContext);
     }
 
