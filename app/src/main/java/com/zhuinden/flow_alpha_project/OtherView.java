@@ -4,6 +4,7 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
@@ -81,7 +82,7 @@ public class OtherView
     }
 
     @Override
-    public void fromBundle(Bundle bundle) {
+    public void fromBundle(@Nullable Bundle bundle) {
         if(bundle != null) {
             state = State.valueOf(bundle.getString("STATE", State.STATE_1.name()));
             Log.i(TAG, "Restored state " + state.name() + " from bundle");
