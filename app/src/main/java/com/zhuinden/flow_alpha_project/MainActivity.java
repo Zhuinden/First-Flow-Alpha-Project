@@ -13,6 +13,7 @@ import java.util.Map;
 
 import flow.Direction;
 import flow.Flow;
+import flow.ForceBundler;
 import flow.KeyChanger;
 import flow.KeyDispatcher;
 import flow.KeyParceler;
@@ -136,6 +137,7 @@ public class MainActivity
     protected void onSaveInstanceState(Bundle outState) {
         Log.i(TAG, "Calling onSaveInstanceState()");
         super.onSaveInstanceState(outState);
+        ForceBundler.saveToBundle(this, root.getChildAt(0));
     }
 
     @Override

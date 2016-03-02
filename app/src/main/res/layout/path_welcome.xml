@@ -23,4 +23,22 @@
         android:singleLine="true"
         android:text="welcome"
         android:gravity="center"/>
+
+    <Button
+        android:id="@+id/welcome_setstate1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Set State 1"/>
+
+    <Button
+        android:id="@+id/welcome_setstate2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Set State 2"/>
+
+    <Button
+        android:id="@+id/welcome_setstate3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Set State 3"/>
 </com.zhuinden.flow_alpha_project.WelcomeView>

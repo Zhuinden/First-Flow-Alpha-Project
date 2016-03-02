@@ -2,6 +2,7 @@ package com.zhuinden.flow_alpha_project;
 
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -13,7 +14,9 @@ import flow.Flow;
 /**
  * Created by Zhuinden on 2016.03.02..
  */
-public class WelcomeView extends LinearLayout {
+public class WelcomeView
+        extends LinearLayout
+        implements Bundleable {
     private static final String TAG = "WelcomeView";
 
     public WelcomeView(Context context) {
@@ -40,6 +43,8 @@ public class WelcomeView extends LinearLayout {
     private void init(Context context) {
     }
 
+    State state;
+
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
@@ -53,6 +58,56 @@ public class WelcomeView extends LinearLayout {
                 Flow.get(v).set(new OtherKey());
             }
         });
+
+        findViewById(R.id.welcome_setstate1).setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                state = State.STATE_1;
+                Log.i(TAG, "Set state " + state.name());
+            }
+        });
+        findViewById(R.id.welcome_setstate2).setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                state = State.STATE_2;
+                Log.i(TAG, "Set state " + state.name());
+            }
+        });
+        findViewById(R.id.welcome_setstate3).setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                state = State.STATE_3;
+                Log.i(TAG, "Set state " + state.name());
+            }
+        });
+        if(state == null) {
+            state = State.STATE_1;
+        }
+        Log.i(TAG, "Post-inflation state is " + state);
+    }
+
+    @Override
+    public Bundle toBundle() {
+        Log.i(TAG, "Saving state " + state.name() + " to bundle");
+        Bundle bundle = new Bundle();
+        bundle.putString("STATE", state.name());
+        return bundle;
+    }
+
+    @Override
+    public void fromBundle(Bundle bundle) {
+        if(bundle != null) {
+            state = State.valueOf(bundle.getString("STATE", State.STATE_1.name()));
+            Log.i(TAG, "Restored state " + state.name() + " from bundle");
+        } else {
+            Log.i(TAG, "Bundle is null on restore");
+        }
+    }
+
+    enum State {
+        STATE_1,
+        STATE_2,
+        STATE_3;
     }
 
     @Override
