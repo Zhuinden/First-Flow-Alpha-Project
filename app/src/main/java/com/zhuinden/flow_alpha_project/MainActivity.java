@@ -1,5 +1,9 @@
 package com.zhuinden.flow_alpha_project;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -33,29 +37,67 @@ public class MainActivity
         }
 
         @Override
-        public void changeKey(State outgoingState, State incomingState, Direction direction, Map<Object, Context> incomingContexts, TraversalCallback callback) {
+        public void changeKey(State outgoingState, State incomingState, final Direction direction, Map<Object, Context> incomingContexts, final TraversalCallback callback) {
             Log.i(TAG, "Change Key: [" + outgoingState + "] - [" + incomingState + "]");
             LayoutClassKey layoutClassKey = incomingState.getKey();
-            if(outgoingState != null && mainActivity.root.getChildAt(0) != null) {
+            final View previousView = mainActivity.root.getChildAt(0);
+            if(outgoingState != null && previousView != null) {
                 Log.i(TAG, "Persisting outgoing state for " + mainActivity.root.getChildAt(0));
-                View previousView = mainActivity.root.getChildAt(0);
                 outgoingState.save(previousView);
                 if(previousView instanceof Bundleable) {
                     Log.i(TAG, "Persisting state to bundle for " + mainActivity.root.getChildAt(0));
                     outgoingState.setBundle(((Bundleable) previousView).toBundle());
                 }
             }
-            mainActivity.root.removeAllViews();
             Context internalContext = incomingContexts.get(layoutClassKey);
             LayoutInflater layoutInflater = (LayoutInflater) internalContext.getSystemService(LAYOUT_INFLATER_SERVICE);
-            layoutInflater.inflate(layoutClassKey.getLayout(), mainActivity.root, true);
-            Log.i(TAG, "Restoring view state for " + mainActivity.root.getChildAt(0));
-            incomingState.restore(mainActivity.root.getChildAt(0));
-            if(mainActivity.root.getChildAt(0) instanceof Bundleable) {
-                Log.i(TAG, "Restoring state from bundle for " + mainActivity.root.getChildAt(0));
-                ((Bundleable) mainActivity.root.getChildAt(0)).fromBundle(incomingState.getBundle());
+
+            final View newView = layoutInflater.inflate(layoutClassKey.getLayout(), mainActivity.root, false);
+            Log.i(TAG, "Restoring view state for " + newView);
+            incomingState.restore(newView);
+            if(newView instanceof Bundleable) {
+                Log.i(TAG, "Restoring state from bundle for " + newView);
+                ((Bundleable) newView).fromBundle(incomingState.getBundle());
             }
-            callback.onTraversalCompleted();
+
+            if(direction == Direction.REPLACE) {
+                if(previousView != null) {
+                    mainActivity.root.removeView(previousView);
+                }
+                mainActivity.root.addView(newView);
+                callback.onTraversalCompleted();
+            } else {
+                mainActivity.root.addView(newView);
+                ViewUtils.waitForMeasure(newView, new ViewUtils.OnMeasuredCallback() {
+                    @Override
+                    public void onMeasured(View view, int width, int height) {
+                        Animator animator = createSegue(previousView, newView, direction);
+                        animator.addListener(new AnimatorListenerAdapter() {
+                            @Override
+                            public void onAnimationEnd(Animator animation) {
+                                if(previousView != null) {
+                                    mainActivity.root.removeView(previousView);
+                                }
+                                callback.onTraversalCompleted();
+                            }
+                        });
+                        animator.start();
+                    }
+                });
+            }
+        }
+
+        private Animator createSegue(View from, View to, Direction direction) {
+            boolean backward = direction == Direction.BACKWARD;
+            int fromTranslation = backward ? from.getWidth() : -from.getWidth();
+            int toTranslation = backward ? -to.getWidth() : to.getWidth();
+
+            AnimatorSet set = new AnimatorSet();
+
+            set.play(ObjectAnimator.ofFloat(from, View.TRANSLATION_X, fromTranslation));
+            set.play(ObjectAnimator.ofFloat(to, View.TRANSLATION_X, toTranslation, 0));
+
+            return set;
         }
     }
 
