@@ -42,10 +42,10 @@ public class MainActivity
             LayoutClassKey layoutClassKey = incomingState.getKey();
             final View previousView = mainActivity.root.getChildAt(0);
             if(outgoingState != null && previousView != null) {
-                Log.i(TAG, "Persisting outgoing state for " + mainActivity.root.getChildAt(0));
+                Log.i(TAG, "Persisting outgoing state for " + previousView);
                 outgoingState.save(previousView);
                 if(previousView instanceof Bundleable) {
-                    Log.i(TAG, "Persisting state to bundle for " + mainActivity.root.getChildAt(0));
+                    Log.i(TAG, "Persisting state to bundle for " + previousView);
                     outgoingState.setBundle(((Bundleable) previousView).toBundle());
                 }
             }
