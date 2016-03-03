@@ -39,7 +39,7 @@ public class MainActivity
         @Override
         public void changeKey(State outgoingState, State incomingState, final Direction direction, Map<Object, Context> incomingContexts, final TraversalCallback callback) {
             Log.i(TAG, "Change Key: [" + outgoingState + "] - [" + incomingState + "]");
-            LayoutClassKey layoutClassKey = incomingState.getKey();
+
             final View previousView = mainActivity.root.getChildAt(0);
             if(outgoingState != null && previousView != null) {
                 Log.i(TAG, "Persisting outgoing state for " + previousView);
@@ -49,10 +49,12 @@ public class MainActivity
                     outgoingState.setBundle(((Bundleable) previousView).toBundle());
                 }
             }
-            Context internalContext = incomingContexts.get(layoutClassKey);
-            LayoutInflater layoutInflater = (LayoutInflater) internalContext.getSystemService(LAYOUT_INFLATER_SERVICE);
 
-            final View newView = layoutInflater.inflate(layoutClassKey.getLayout(), mainActivity.root, false);
+            LayoutClassKey newKey = incomingState.getKey();
+            Context internalContext = incomingContexts.get(newKey);
+            LayoutInflater layoutInflater = (LayoutInflater) internalContext.getSystemService(LAYOUT_INFLATER_SERVICE);
+            final View newView = layoutInflater.inflate(newKey.getLayout(), mainActivity.root, false);
+
             Log.i(TAG, "Restoring view state for " + newView);
             incomingState.restore(newView);
             if(newView instanceof Bundleable) {
