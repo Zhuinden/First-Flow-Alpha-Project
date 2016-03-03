@@ -145,8 +145,8 @@ public class MainActivity
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         Log.i(TAG, "Calling onSaveInstanceState()");
-        super.onSaveInstanceState(outState);
         ForceBundler.saveToBundle(this, root.getChildAt(0));
+        super.onSaveInstanceState(outState);
     }
 
     //
