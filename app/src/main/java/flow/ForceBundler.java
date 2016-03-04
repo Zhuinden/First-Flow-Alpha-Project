@@ -15,6 +15,7 @@ public class ForceBundler {
             KeyManager keyManager = internalLifeCycleIntegration.keyManager;
             for(View view : activeViews) {
                 State state = keyManager.getState(Flow.getKey(view));
+                state.save(view);
                 if(view instanceof Bundleable) {
                     state.setBundle(((Bundleable) view).toBundle());
                 }
