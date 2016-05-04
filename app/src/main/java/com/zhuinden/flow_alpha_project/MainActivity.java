@@ -7,6 +7,7 @@ import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,19 +16,21 @@ import android.widget.RelativeLayout;
 
 import java.util.Map;
 
+import flow.Bundleable;
 import flow.Direction;
+import flow.Dispatcher;
 import flow.Flow;
 import flow.ForceBundler;
-import flow.KeyChanger;
-import flow.KeyDispatcher;
+import flow.History;
 import flow.KeyParceler;
 import flow.State;
+import flow.Traversal;
 import flow.TraversalCallback;
 
 public class MainActivity
         extends AppCompatActivity {
     static class MainKeyChanger
-            extends KeyChanger {
+            implements Dispatcher {
         private static final String TAG = "MainKeyChanger";
 
         private MainActivity mainActivity;
@@ -36,8 +39,34 @@ public class MainActivity
             this.mainActivity = mainActivity;
         }
 
+        private Animator createSegue(View from, View to, Direction direction) {
+            boolean backward = direction == Direction.BACKWARD;
+            int fromTranslation = backward ? from.getWidth() : -from.getWidth();
+            int toTranslation = backward ? -to.getWidth() : to.getWidth();
+
+            AnimatorSet set = new AnimatorSet();
+
+            set.play(ObjectAnimator.ofFloat(from, View.TRANSLATION_X, fromTranslation));
+            set.play(ObjectAnimator.ofFloat(to, View.TRANSLATION_X, toTranslation, 0));
+            set.setDuration(2000);
+            return set;
+        }
+
         @Override
-        public void changeKey(State outgoingState, State incomingState, final Direction direction, Map<Object, Context> incomingContexts, final TraversalCallback callback) {
+        public void dispatch(@NonNull Traversal traversal, final @NonNull TraversalCallback callback) {
+            History destination = traversal.destination;
+            History origin = traversal.origin;
+            if(origin != null && origin.top() != null && origin.top() == destination.top()) { //short circuit on same key
+                callback.onTraversalCompleted();
+                return;
+            }
+            State outgoingState = null;
+            if(origin != null && origin.top() != null) {
+                outgoingState = traversal.getState(origin.top());
+            }
+            State incomingState = traversal.getState(destination.top());
+            final Direction direction = traversal.direction;
+
             Log.i(TAG, "Change Key: [" + outgoingState + "] - [" + incomingState + "]");
 
             final View previousView = mainActivity.root.getChildAt(0);
@@ -51,8 +80,8 @@ public class MainActivity
             }
 
             LayoutClassKey newKey = incomingState.getKey();
-            Context internalContext = incomingContexts.get(newKey);
-            LayoutInflater layoutInflater = (LayoutInflater) internalContext.getSystemService(LAYOUT_INFLATER_SERVICE);
+            Context internalContext = traversal.createContext(newKey, mainActivity.getBaseContext());
+            LayoutInflater layoutInflater = LayoutInflater.from(internalContext);
             final View newView = layoutInflater.inflate(newKey.getLayout(), mainActivity.root, false);
 
             Log.i(TAG, "Restoring view state for " + newView);
@@ -88,19 +117,6 @@ public class MainActivity
                 });
             }
         }
-
-        private Animator createSegue(View from, View to, Direction direction) {
-            boolean backward = direction == Direction.BACKWARD;
-            int fromTranslation = backward ? from.getWidth() : -from.getWidth();
-            int toTranslation = backward ? -to.getWidth() : to.getWidth();
-
-            AnimatorSet set = new AnimatorSet();
-
-            set.play(ObjectAnimator.ofFloat(from, View.TRANSLATION_X, fromTranslation));
-            set.play(ObjectAnimator.ofFloat(to, View.TRANSLATION_X, toTranslation, 0));
-
-            return set;
-        }
     }
 
 
@@ -124,7 +140,7 @@ public class MainActivity
                     }
                 }) //
                 .defaultKey(new WelcomeKey()) //
-                .dispatcher(KeyDispatcher.configure(this, new MainKeyChanger(this)).build()) //
+                .dispatcher(new MainKeyChanger(this)) //
                 .install(); //
         super.attachBaseContext(baseContext);
     }

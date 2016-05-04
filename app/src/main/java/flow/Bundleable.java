@@ -1,10 +1,10 @@
-package com.zhuinden.flow_alpha_project;
+package flow;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 
 /**
- * Created by Zhuinden on 2016.03.02..
+ * Created by Zhuinden on 2016.04.16..
  */
 public interface Bundleable {
     Bundle toBundle();
